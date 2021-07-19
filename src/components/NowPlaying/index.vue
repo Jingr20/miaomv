@@ -1,97 +1,13 @@
 <template>
     <div class="movie_body">
         <ul>
-            <li>
-                <div class="pic_show"><img src="/images/movie_1.jpg"></div>
+            <li v-for="item in movieList" :key="item.id">
+                <div class="pic_show"><img :src="item.img | setWH('170.230')"></div>
                 <div class="info_list">
-                    <h2>无名之辈</h2>
-                    <p>观众评 <span class="grade">9.2</span></p>
-                    <p>主演: 陈建斌,任素汐,潘斌龙</p>
-                    <p>今天55家影院放映607场</p>
-                </div>
-                <div class="btn_mall">
-                    购票
-                </div>
-            </li>
-            <li>
-                <div class="pic_show"><img src="/images/movie_2.jpg"></div>
-                <div class="info_list">
-                    <h2>毒液：致命守护者</h2>
-                    <p>观众评 <span class="grade">9.3</span></p>
-                    <p>主演: 汤姆·哈迪,米歇尔·威廉姆斯,里兹·阿迈德</p>
-                    <p>今天56家影院放映443场</p>
-                </div>
-                <div class="btn_mall">
-                    购票
-                </div>
-            </li>
-            <li>
-                <div class="pic_show"><img src="/images/movie_1.jpg"></div>
-                <div class="info_list">
-                    <h2>无名之辈</h2>
-                    <p>观众评 <span class="grade">9.2</span></p>
-                    <p>主演: 陈建斌,任素汐,潘斌龙</p>
-                    <p>今天55家影院放映607场</p>
-                </div>
-                <div class="btn_mall">
-                    购票
-                </div>
-            </li>
-            <li>
-                <div class="pic_show"><img src="/images/movie_2.jpg"></div>
-                <div class="info_list">
-                    <h2>毒液：致命守护者</h2>
-                    <p>观众评 <span class="grade">9.3</span></p>
-                    <p>主演: 汤姆·哈迪,米歇尔·威廉姆斯,里兹·阿迈德</p>
-                    <p>今天56家影院放映443场</p>
-                </div>
-                <div class="btn_mall">
-                    购票
-                </div>
-            </li>
-            <li>
-                <div class="pic_show"><img src="/images/movie_1.jpg"></div>
-                <div class="info_list">
-                    <h2>无名之辈</h2>
-                    <p>观众评 <span class="grade">9.2</span></p>
-                    <p>主演: 陈建斌,任素汐,潘斌龙</p>
-                    <p>今天55家影院放映607场</p>
-                </div>
-                <div class="btn_mall">
-                    购票
-                </div>
-            </li>
-            <li>
-                <div class="pic_show"><img src="/images/movie_2.jpg"></div>
-                <div class="info_list">
-                    <h2>毒液：致命守护者</h2>
-                    <p>观众评 <span class="grade">9.3</span></p>
-                    <p>主演: 汤姆·哈迪,米歇尔·威廉姆斯,里兹·阿迈德</p>
-                    <p>今天56家影院放映443场</p>
-                </div>
-                <div class="btn_mall">
-                    购票
-                </div>
-            </li>
-            <li>
-                <div class="pic_show"><img src="/images/movie_1.jpg"></div>
-                <div class="info_list">
-                    <h2>无名之辈</h2>
-                    <p>观众评 <span class="grade">9.2</span></p>
-                    <p>主演: 陈建斌,任素汐,潘斌龙</p>
-                    <p>今天55家影院放映607场</p>
-                </div>
-                <div class="btn_mall">
-                    购票
-                </div>
-            </li>
-            <li>
-                <div class="pic_show"><img src="/images/movie_2.jpg"></div>
-                <div class="info_list">
-                    <h2>毒液：致命守护者</h2>
-                    <p>观众评 <span class="grade">9.3</span></p>
-                    <p>主演: 汤姆·哈迪,米歇尔·威廉姆斯,里兹·阿迈德</p>
-                    <p>今天56家影院放映443场</p>
+                    <h2>{{item.nm}}</h2>
+                    <p>观众评 <span class="grade">{{item.sc}}</span></p>
+                    <p>主演：{{item.star}}</p>
+                    <p>{{item.showInfo}}</p>
                 </div>
                 <div class="btn_mall">
                     购票
@@ -103,7 +19,34 @@
 
 <script>
 export default {
-    name:'NowPlaying'
+    name:'NowPlaying',
+    data:function(){
+        return{
+            movieList:[]
+        }
+    },
+    // 组件的生命周期函数
+    mounted:function(){
+        // 从猫眼电影上获取【正在上映】数据信息
+        this.$axios.get('/movieOnInfoList?ci=1&token=&limit=10').then( (res) => {
+            console.log(res.data.movieList);
+            // 判断是否获取到数据
+            var statusText = res.statusText;
+            if(statusText === 'OK'){
+                this.movieList = res.data.movieList;
+            }
+
+            // 需要对请求到的图像链接做处理
+            // http://p0.meituan.net/w.h/movie/120f2e1e6b0a67449e31107a598c5c911203737.jpg
+            // 处理后（w.h）：
+            // https://p0.meituan.net/170.230/movie/120f2e1e6b0a67449e31107a598c5c911203737.jpg
+            // for(var i=0; i<this.movieList.length; i++){
+            //     console.log(this.movieList[i].img);
+            //     this.movieList[i].img.replace(/w\.h/,'170.230');
+            //     console.log(this.movieList[i].img);
+            // }
+        })
+    }
 }
 </script>
 
