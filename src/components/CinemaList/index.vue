@@ -1,88 +1,21 @@
 <template>
     <div class="cinema_body">
         <ul>
-            <li>
+            <li v-for="item in cinemaList" :key="item.id">
                 <div>
-                    <span>大地影院(澳东世纪店)</span>
-                    <span class="q"><span class="price">22.9</span> 元起</span>
+                    <span>{{item.nm}}</span>
+                    <span class="q"><span class="price">{{item.sellPrice}}</span> 元起</span>
                 </div>
                 <div class="address">
-                    <span>金州区大连经济技术开发区澳东世纪3层</span>
-                    <span>1763.5km</span>
+                    <span>{{item.addr}}</span>
+                    <span>{{item.distance}}</span>
                 </div>
                 <div class="card">
-                    <div>小吃</div>
-                    <div>折扣卡</div>
-                </div>
-            </li>
-            <li>
-                <div>
-                    <span>大地影院(澳东世纪店)</span>
-                    <span class="q"><span class="price">22.9</span> 元起</span>
-                </div>
-                <div class="address">
-                    <span>金州区大连经济技术开发区澳东世纪3层</span>
-                    <span>1763.5km</span>
-                </div>
-                <div class="card">
-                    <div>小吃</div>
-                    <div>折扣卡</div>
-                </div>
-            </li>
-            <li>
-                <div>
-                    <span>大地影院(澳东世纪店)</span>
-                    <span class="q"><span class="price">22.9</span> 元起</span>
-                </div>
-                <div class="address">
-                    <span>金州区大连经济技术开发区澳东世纪3层</span>
-                    <span>1763.5km</span>
-                </div>
-                <div class="card">
-                    <div>小吃</div>
-                    <div>折扣卡</div>
-                </div>
-            </li>
-            <li>
-                <div>
-                    <span>大地影院(澳东世纪店)</span>
-                    <span class="q"><span class="price">22.9</span> 元起</span>
-                </div>
-                <div class="address">
-                    <span>金州区大连经济技术开发区澳东世纪3层</span>
-                    <span>1763.5km</span>
-                </div>
-                <div class="card">
-                    <div>小吃</div>
-                    <div>折扣卡</div>
-                </div>
-            </li>
-            <li>
-                <div>
-                    <span>大地影院(澳东世纪店)</span>
-                    <span class="q"><span class="price">22.9</span> 元起</span>
-                </div>
-                <div class="address">
-                    <span>金州区大连经济技术开发区澳东世纪3层</span>
-                    <span>1763.5km</span>
-                </div>
-                <div class="card">
-                    <div>小吃</div>
-                    <div>折扣卡</div>
-                </div>
-            </li>
-            <li>
-                <div>
-                    <span>大地影院(澳东世纪店)</span>
-                    <span class="q"><span class="price">22.9</span> 元起</span>
-                </div>
-                <div class="address">
-                    <span>金州区大连经济技术开发区澳东世纪3层</span>
-                    <span>1763.5km</span>
-                </div>
-                <div class="card">
-                    <div>小吃</div>
-                    <div>折扣卡</div>
+                    <div v-for="(num,key) in item.tag" :key="key" v-if="num === 1" :class="key | classCard">
+                        {{key | formatCard}}
+                    </div>
+                    <!-- <div v-if="item.tag.snack">小吃</div> -->
+                    <!-- <div v-if="item.tag.vipTag">折扣卡</div> -->
                 </div>
             </li>
         </ul>
@@ -91,7 +24,51 @@
 
 <script>
 export default {
-    name:'CinemaList'
+    name:'CinemaList',
+    data:function(){
+        return{
+            cinemaList:[]
+        }
+    },
+    mounted:function(){
+        this.$axios.get('/cinemaList?ci=1').then( (res) => {
+            var statusText = res.statusText;
+            if(statusText === 'OK'){
+                console.log(res.data.cinemas)
+                this.cinemaList = res.data.cinemas;
+            }
+        })
+    },
+    filters:{
+        formatCard:function(key){
+            var cards = [
+                {key:'allowRefund',value:'改签'},
+                {key:'endorse',value:'退'},
+                {key:'sell',value:'折扣卡'},
+                {key:'snack',value:'小吃'}
+            ];
+            for(var i=0; i<cards.length; i++){
+                if(key === cards[i].key){
+                    return cards[i].value
+                }
+            }
+            return ''
+        },
+        classCard:function(key){
+            var cards = [
+                {key:'allowRefund',value:'bl'},
+                {key:'endorse',value:'bl'},
+                {key:'sell',value:'or'},
+                {key:'snack',value:'or'}
+            ];
+            for(var i=0; i<cards.length; i++){
+                if(key === cards[i].key){
+                    return cards[i].value
+                }
+            }
+            return ''
+        }
+    }
 }
 </script>
 
